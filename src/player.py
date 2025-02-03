@@ -4,7 +4,7 @@ from enum import Enum
 PLAYER_SVG_PATH = 'assets/player_car.svg'
 
 class Player:
-    class Direction(Enum):
+    class Direction(int, Enum):
         RIGHT = 0
         LEFT = 1
         UP = 2
@@ -12,9 +12,13 @@ class Player:
 
     def __init__(self, square_size):
         self.image = pygame.transform.scale(pygame.image.load(PLAYER_SVG_PATH), (square_size, square_size))
+        self.square_size = square_size
         self.x = 0
         self.y = 0
         self.direction = Player.Direction.RIGHT
+        self.direction_command = Player.Direction.RIGHT
+        self.turns_allowed = [False, False, False, False]
+        self.speed = 2
 
     def draw(self, screen):
         if self.direction == Player.Direction.RIGHT:
@@ -31,3 +35,12 @@ class Player:
 
     def face(self, direction):
         self.direction = direction
+
+    def set_command(self, direction_command):
+        self.direction_command = direction_command
+
+    def get_centered_coords(self):
+        center_x = self.x + (self.square_size // 2)
+        center_y = self.y + (self.square_size // 2)
+
+        return center_x, center_y
