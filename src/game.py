@@ -1,4 +1,5 @@
 import pygame
+from enum import Enum
 from src.board import boards
 from src.player import Player
 
@@ -8,6 +9,10 @@ class Game:
     HEIGHT_TOTAL_TILES = 9
     SQUARE_SIZE = 50
     FPS = 60
+
+    class TILE(int, Enum):
+        EMPTY = 0
+        WALL = 1
 
     def __init__(self):
         pygame.init()
@@ -28,9 +33,9 @@ class Game:
     def draw_board(self):
         for row in range(len(self.level)):
             for col in range(len(self.level[row])):
-                if self.level[row][col] == 0:
+                if self.level[row][col] == self.TILE.EMPTY:
                     pygame.draw.rect(self.screen, 'purple', (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
-                if self.level[row][col] == 1:
+                if self.level[row][col] == self.TILE.WALL:
                     pygame.draw.rect(self.screen, 'green', (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
 
 
@@ -40,13 +45,13 @@ class Game:
                 self.running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
-                    self.player.direction = Player.Direction.RIGHT
+                    self.player.face(Player.Direction.RIGHT)
                 if event.key == pygame.K_LEFT:
-                    self.player.direction = Player.Direction.LEFT
+                    self.player.face(Player.Direction.LEFT)
                 if event.key == pygame.K_DOWN:
-                    self.player.direction = Player.Direction.DOWN
+                    self.player.face(Player.Direction.DOWN)
                 if event.key == pygame.K_UP:
-                    self.player.direction = Player.Direction.UP
+                    self.player.face(Player.Direction.UP)
 
     def update_display(self):
         self.timer.tick(self.FPS)

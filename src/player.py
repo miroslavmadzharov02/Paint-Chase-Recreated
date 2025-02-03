@@ -11,7 +11,7 @@ class Player:
         DOWN = 3
 
     def __init__(self, square_size):
-        self.image = pygame.transform.scale(pygame.image.load(PLAYER_SVG_PATH), (square_size * 1.5, square_size))
+        self.image = pygame.transform.scale(pygame.image.load(PLAYER_SVG_PATH), (square_size, square_size))
         self.x = 0
         self.y = 0
         self.direction = Player.Direction.RIGHT
@@ -28,3 +28,6 @@ class Player:
         elif self.direction == Player.Direction.DOWN:
             rotated_image = pygame.transform.rotate(self.image, 270)
             screen.blit(rotated_image, (self.x, self.y))
+
+    def face(self, direction):
+        self.direction = direction
