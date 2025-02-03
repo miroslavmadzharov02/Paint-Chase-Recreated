@@ -26,12 +26,12 @@ class Game:
         self.running = True
 
     def draw_board(self):
-        for row in range(len(level)):
-        for col in range(len(level[row])):
-            if level[row][col] == 0:
-                pygame.draw.rect(screen, 'purple', (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
-            if level[row][col] == 1:
-                pygame.draw.rect(screen, 'green', (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+        for row in range(len(self.level)):
+            for col in range(len(self.level[row])):
+                if self.level[row][col] == 0:
+                    pygame.draw.rect(self.screen, 'purple', (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
+                if self.level[row][col] == 1:
+                    pygame.draw.rect(self.screen, 'green', (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
 
 
     def handle_events(self):
