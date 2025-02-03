@@ -38,6 +38,15 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    self.player.direction = Player.Direction.RIGHT
+                if event.key == pygame.K_LEFT:
+                    self.player.direction = Player.Direction.LEFT
+                if event.key == pygame.K_DOWN:
+                    self.player.direction = Player.Direction.DOWN
+                if event.key == pygame.K_UP:
+                    self.player.direction = Player.Direction.UP
 
     def update_display(self):
         self.timer.tick(self.FPS)
