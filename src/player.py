@@ -1,5 +1,6 @@
 import pygame
 from enum import Enum
+from src.tile import Tile
 
 PLAYER_SVG_PATH = 'assets/player_car.svg'
 
@@ -44,3 +45,9 @@ class Player:
         center_y = self.y + (self.square_size // 2)
 
         return center_x, center_y
+    
+    def check_player_win(self, level):
+        count_enemy = sum(row.count(Tile.ENEMY.board_index) for row in level)
+        count_player = sum(row.count(Tile.PLAYER.board_index) for row in level)
+
+        return count_player > count_enemy

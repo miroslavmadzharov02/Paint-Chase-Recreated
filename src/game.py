@@ -2,6 +2,10 @@ import pygame
 from src.tile import Tile
 from src.board import boards
 from src.player import Player
+from src.bar import Bar
+
+WIN_SVG_PATH = "assets/win.svg"
+LOSE_SVG_PATH = "assets/lose.svg"
 
 class Game:
     BOTTOM_PADDING = 50
@@ -24,6 +28,11 @@ class Game:
 
         self.player = Player(self.SQUARE_SIZE)
         self.turns_allowed = [False, False, False, False]
+
+        self.bar = Bar(self.WINDOW_HEIGHT, self.WINDOW_WIDTH, self.BOTTOM_PADDING)
+
+        self.win_image = pygame.transform.scale(pygame.image.load(WIN_SVG_PATH), (self.SQUARE_SIZE * 10, self.SQUARE_SIZE * 10))
+        self.lose_image = pygame.transform.scale(pygame.image.load(LOSE_SVG_PATH), (self.SQUARE_SIZE, self.SQUARE_SIZE))
 
         self.running = True
 
@@ -131,6 +140,22 @@ class Game:
             if current_tile == Tile.EMPTY.board_index or current_tile == Tile.ENEMY.board_index:
                  self.level[center_y // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] = Tile.PLAYER.board_index
 
+    def display_game_over_screen(self, player_won):
+        image = self.win_image if player_won else self.lose_image
+
+        while True:
+            self.screen.fill("black")
+            self.screen.blit(image, (0, 0))
+            pygame.display.flip()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        return
 
     def update_display(self):
         self.timer.tick(self.FPS)
@@ -142,6 +167,11 @@ class Game:
         self.check_position(center_x, center_y)
         self.move_player()
         self.paint_player(center_x, center_y)
+
+        self.bar.draw(self.screen)
+        if self.bar.is_time_over():
+            self.display_game_over_screen(self.player.check_player_win(self.level))
+
         pygame.display.flip()
 
     def run(self):
