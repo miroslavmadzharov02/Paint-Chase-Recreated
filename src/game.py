@@ -27,7 +27,6 @@ class Game:
         self.level = boards[self.current_level_index]
 
         self.player = Player(self.SQUARE_SIZE, 0, 0)
-        self.turns_allowed = [False, False, False, False]
 
         self.bar = Bar(self.WINDOW_HEIGHT, self.WINDOW_WIDTH, self.BOTTOM_PADDING)
 
@@ -35,60 +34,6 @@ class Game:
         self.lose_image = pygame.transform.scale(pygame.image.load(LOSE_SVG_PATH), (self.SQUARE_SIZE, self.SQUARE_SIZE))
 
         self.running = True
-
-    def check_position(self, center_x, center_y):
-        fudge = 15
-        self.turns_allowed = [False, False, False, False]
-        
-        def is_empty_tile(tile):
-            return tile == Tile.EMPTY.board_index or tile == Tile.PLAYER.board_index or tile == Tile.ENEMY.board_index
-
-        if self.player.direction == self.player.Direction.RIGHT:
-            if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE]):
-                self.turns_allowed[self.player.Direction.LEFT] = True 
-        if self.player.direction == self.player.Direction.LEFT:
-            if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE]):
-                self.turns_allowed[self.player.Direction.RIGHT] = True 
-        if self.player.direction == self.player.Direction.UP:
-            if is_empty_tile(self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
-                self.turns_allowed[self.player.Direction.DOWN] = True 
-        if self.player.direction == self.player.Direction.DOWN:
-            if is_empty_tile(self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
-                self.turns_allowed[self.player.Direction.UP] = True      
-
-        if self.player.direction == self.player.Direction.UP or self.player.direction == self.player.Direction.DOWN:
-            if 22 <= center_x % self.SQUARE_SIZE <= 28:
-                if is_empty_tile(self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
-                    self.turns_allowed[self.player.Direction.DOWN] = True
-                if is_empty_tile(self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
-                    self.turns_allowed[self.player.Direction.UP] = True
-            if 22 <= center_y % self.SQUARE_SIZE <= 28:
-                if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE]):
-                    self.turns_allowed[self.player.Direction.LEFT] = True
-                if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE]):
-                    self.turns_allowed[self.player.Direction.RIGHT] = True
-
-        if self.player.direction == self.player.Direction.LEFT or self.player.direction == self.player.Direction.RIGHT:
-            if 22 <= center_x % self.SQUARE_SIZE <= 28:
-                if is_empty_tile(self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
-                    self.turns_allowed[self.player.Direction.DOWN] = True
-                if is_empty_tile(self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
-                    self.turns_allowed[self.player.Direction.UP] = True
-            if 22 <= center_y % self.SQUARE_SIZE <= 28:
-                if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE]):
-                    self.turns_allowed[self.player.Direction.LEFT] = True
-                if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE]):
-                    self.turns_allowed[self.player.Direction.RIGHT] = True
-
-    def move_player(self):
-        if self.player.direction == self.player.Direction.RIGHT and self.turns_allowed[self.player.Direction.RIGHT]:
-            self.player.x += self.player.speed
-        elif self.player.direction == self.player.Direction.LEFT and self.turns_allowed[self.player.Direction.LEFT]:
-            self.player.x -= self.player.speed
-        if self.player.direction == self.player.Direction.UP and self.turns_allowed[self.player.Direction.UP]:
-            self.player.y -= self.player.speed
-        elif self.player.direction == self.player.Direction.DOWN and self.turns_allowed[self.player.Direction.DOWN]:
-            self.player.y += self.player.speed
 
     def draw_board(self):
         for row in range(len(self.level)):
@@ -121,7 +66,7 @@ class Game:
                     self.player.set_command(Player.Direction.UP)   
 
         for i in range(len(self.player.Direction)):
-            if self.player.direction_command == i and self.turns_allowed[i]:
+            if self.player.direction_command == i and self.player.turns_allowed[i]:
                 self.player.face(i)
 
         if self.player.x < 0:
@@ -158,9 +103,9 @@ class Game:
         self.player.draw(self.screen)
 
         center_x, center_y = self.player.get_centered_coords()
-        self.check_position(center_x, center_y)
-        self.move_player()
-        self.player.paint_tile(self.level, self.WINDOW_WIDTH)
+        self.player.check_position(self.level, center_x, center_y)
+        self.player.move()
+        self.player.paint_tile(self.level, center_x, center_y, self.WINDOW_WIDTH)
 
         self.bar.draw(self.screen)
         if self.bar.is_time_over():
