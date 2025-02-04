@@ -84,10 +84,9 @@ class Game:
     def draw_board(self):
         for row in range(len(self.level)):
             for col in range(len(self.level[row])):
-                if self.level[row][col] == Tile.EMPTY.board_index:
-                    pygame.draw.rect(self.screen, Tile.EMPTY.color, (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
-                if self.level[row][col] == Tile.WALL.board_index:
-                    pygame.draw.rect(self.screen, Tile.WALL.color, (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
+                for tile in Tile:
+                    if self.level[row][col] == tile.board_index:
+                        pygame.draw.rect(self.screen, tile.color, (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -126,7 +125,11 @@ class Game:
         elif self.player.y > self.WINDOW_HEIGHT - self.SQUARE_SIZE - self.BOTTOM_PADDING:
             self.player.y = self.WINDOW_HEIGHT - self.SQUARE_SIZE - self.BOTTOM_PADDING
 
-
+    def paint_player(self, center_x, center_y):
+        if 0 < self.player.x < self.WINDOW_WIDTH - self.SQUARE_SIZE:
+            current_tile = self.level[center_y // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]
+            if current_tile == Tile.EMPTY.board_index or current_tile == Tile.ENEMY.board_index:
+                 self.level[center_y // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] = Tile.PLAYER.board_index
 
 
     def update_display(self):
@@ -138,6 +141,7 @@ class Game:
         center_x, center_y = self.player.get_centered_coords()
         self.check_position(center_x, center_y)
         self.move_player()
+        self.paint_player(center_x, center_y)
         pygame.display.flip()
 
     def run(self):

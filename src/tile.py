@@ -4,7 +4,7 @@ class Tile(Enum):
         self.board_index = board_index
         self.color = color
 
-    ENEMY = (-2, 'red')
-    PLAYER = (-1, 'blue')
     EMPTY = (0, 'purple')
     WALL = (1, 'green')
+    ENEMY = (2, 'red')
+    PLAYER = (3, 'blue')
