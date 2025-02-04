@@ -26,7 +26,7 @@ class Game:
         self.current_level_index = 0
         self.level = boards[self.current_level_index]
 
-        self.player = Player(self.SQUARE_SIZE)
+        self.player = Player(self.SQUARE_SIZE, 0, 0)
         self.turns_allowed = [False, False, False, False]
 
         self.bar = Bar(self.WINDOW_HEIGHT, self.WINDOW_WIDTH, self.BOTTOM_PADDING)
@@ -134,12 +134,6 @@ class Game:
         elif self.player.y > self.WINDOW_HEIGHT - self.SQUARE_SIZE - self.BOTTOM_PADDING:
             self.player.y = self.WINDOW_HEIGHT - self.SQUARE_SIZE - self.BOTTOM_PADDING
 
-    def paint_player(self, center_x, center_y):
-        if 0 < self.player.x < self.WINDOW_WIDTH - self.SQUARE_SIZE:
-            current_tile = self.level[center_y // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]
-            if current_tile == Tile.EMPTY.board_index or current_tile == Tile.ENEMY.board_index:
-                 self.level[center_y // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] = Tile.PLAYER.board_index
-
     def display_game_over_screen(self, player_won):
         image = self.win_image if player_won else self.lose_image
 
@@ -166,7 +160,7 @@ class Game:
         center_x, center_y = self.player.get_centered_coords()
         self.check_position(center_x, center_y)
         self.move_player()
-        self.paint_player(center_x, center_y)
+        self.player.paint_tile(self.level, self.WINDOW_WIDTH)
 
         self.bar.draw(self.screen)
         if self.bar.is_time_over():
