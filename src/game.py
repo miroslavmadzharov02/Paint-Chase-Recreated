@@ -32,46 +32,45 @@ class Game:
         self.running = True
 
     def check_position(self, center_x, center_y):
-        self.turns_allowed = [False, False, False, False]
         fudge = 15
+        self.turns_allowed = [False, False, False, False]
+        
+        if self.player.direction == self.player.Direction.RIGHT:
+            if self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                self.turns_allowed[self.player.Direction.LEFT] = True 
+        if self.player.direction == self.player.Direction.LEFT:
+            if self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                self.turns_allowed[self.player.Direction.RIGHT] = True 
+        if self.player.direction == self.player.Direction.UP:
+            if self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                self.turns_allowed[self.player.Direction.DOWN] = True 
+        if self.player.direction == self.player.Direction.DOWN:
+            if self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                self.turns_allowed[self.player.Direction.UP] = True      
 
-        if 0 < center_x // self.WIDTH_TOTAL_TILES < self.SQUARE_SIZE - 1:
-            if self.player.direction == self.player.Direction.RIGHT:
-                if self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                    self.turns_allowed[self.player.Direction.LEFT] = True 
-            if self.player.direction == self.player.Direction.LEFT:
-                if self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                    self.turns_allowed[self.player.Direction.RIGHT] = True 
-            if self.player.direction == self.player.Direction.UP:
+        if self.player.direction == self.player.Direction.UP or self.player.direction == self.player.Direction.DOWN:
+            if 22 <= center_x % self.SQUARE_SIZE <= 28:
                 if self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                    self.turns_allowed[self.player.Direction.DOWN] = True 
-            if self.player.direction == self.player.Direction.DOWN:
+                    self.turns_allowed[self.player.Direction.DOWN] = True
                 if self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                    self.turns_allowed[self.player.Direction.UP] = True      
+                    self.turns_allowed[self.player.Direction.UP] = True
+            if 22 <= center_y % self.SQUARE_SIZE <= 28:
+                if self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                    self.turns_allowed[self.player.Direction.LEFT] = True
+                if self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                    self.turns_allowed[self.player.Direction.RIGHT] = True
 
-            if self.player.direction == self.player.Direction.UP or self.player.direction == self.player.Direction.DOWN:
-                if 22 <= center_x % self.SQUARE_SIZE <= 28:
-                    if self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                        self.turns_allowed[self.player.Direction.DOWN] = True
-                    if self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                        self.turns_allowed[self.player.Direction.UP] = True
-                if 22 <= center_y % self.SQUARE_SIZE <= 28:
-                    if self.level[center_y // self.SQUARE_SIZE][(center_x - self.SQUARE_SIZE) // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                        self.turns_allowed[self.player.Direction.LEFT] = True
-                    if self.level[center_y // self.SQUARE_SIZE][(center_x + self.SQUARE_SIZE) // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                        self.turns_allowed[self.player.Direction.RIGHT] = True
-
-            if self.player.direction == self.player.Direction.LEFT or self.player.direction == self.player.Direction.RIGHT:
-                if 22 <= center_x % self.SQUARE_SIZE <= 28:
-                    if self.level[(center_y + self.SQUARE_SIZE) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                        self.turns_allowed[self.player.Direction.DOWN] = True
-                    if self.level[(center_y - self.SQUARE_SIZE) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                        self.turns_allowed[self.player.Direction.UP] = True
-                if 22 <= center_y % self.SQUARE_SIZE <= 28:
-                    if self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                        self.turns_allowed[self.player.Direction.LEFT] = True
-                    if self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
-                        self.turns_allowed[self.player.Direction.RIGHT] = True
+        if self.player.direction == self.player.Direction.LEFT or self.player.direction == self.player.Direction.RIGHT:
+            if 22 <= center_x % self.SQUARE_SIZE <= 28:
+                if self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                    self.turns_allowed[self.player.Direction.DOWN] = True
+                if self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                    self.turns_allowed[self.player.Direction.UP] = True
+            if 22 <= center_y % self.SQUARE_SIZE <= 28:
+                if self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                    self.turns_allowed[self.player.Direction.LEFT] = True
+                if self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                    self.turns_allowed[self.player.Direction.RIGHT] = True
 
     def move_player(self):
         if self.player.direction == self.player.Direction.RIGHT and self.turns_allowed[self.player.Direction.RIGHT]:
@@ -118,10 +117,15 @@ class Game:
             if self.player.direction_command == i and self.turns_allowed[i]:
                 self.player.face(i)
 
-        if self.player.x > self.WINDOW_WIDTH:
-            self.player.x = -50
-        elif self.player.x < -50:
-            self.player.x = self.WINDOW_WIDTH - 5
+        if self.player.x < 0:
+            self.player.x = 0
+        elif self.player.x > self.WINDOW_WIDTH - self.SQUARE_SIZE:
+            self.player.x = self.WINDOW_WIDTH - self.SQUARE_SIZE
+
+        if self.player.y < 0:
+            self.player.y = 0
+        elif self.player.y > self.WINDOW_HEIGHT - self.SQUARE_SIZE - self.BOTTOM_PADDING:
+            self.player.y = self.WINDOW_HEIGHT - self.SQUARE_SIZE - self.BOTTOM_PADDING
 
 
 
