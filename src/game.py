@@ -1,5 +1,5 @@
 import pygame
-from enum import Enum
+from src.tile import Tile
 from src.board import boards
 from src.player import Player
 
@@ -9,10 +9,6 @@ class Game:
     HEIGHT_TOTAL_TILES = 9
     SQUARE_SIZE = 50
     FPS = 60
-
-    class TILE(int, Enum):
-        EMPTY = 0
-        WALL = 1
 
     def __init__(self):
         pygame.init()
@@ -35,41 +31,44 @@ class Game:
         fudge = 15
         self.turns_allowed = [False, False, False, False]
         
+        def is_empty_tile(tile):
+            return tile == Tile.EMPTY.board_index or tile == Tile.PLAYER.board_index or tile == Tile.ENEMY.board_index
+
         if self.player.direction == self.player.Direction.RIGHT:
-            if self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+            if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE]):
                 self.turns_allowed[self.player.Direction.LEFT] = True 
         if self.player.direction == self.player.Direction.LEFT:
-            if self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+            if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE]):
                 self.turns_allowed[self.player.Direction.RIGHT] = True 
         if self.player.direction == self.player.Direction.UP:
-            if self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
+            if is_empty_tile(self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
                 self.turns_allowed[self.player.Direction.DOWN] = True 
         if self.player.direction == self.player.Direction.DOWN:
-            if self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
+            if is_empty_tile(self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
                 self.turns_allowed[self.player.Direction.UP] = True      
 
         if self.player.direction == self.player.Direction.UP or self.player.direction == self.player.Direction.DOWN:
             if 22 <= center_x % self.SQUARE_SIZE <= 28:
-                if self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                if is_empty_tile(self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
                     self.turns_allowed[self.player.Direction.DOWN] = True
-                if self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                if is_empty_tile(self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
                     self.turns_allowed[self.player.Direction.UP] = True
             if 22 <= center_y % self.SQUARE_SIZE <= 28:
-                if self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE]):
                     self.turns_allowed[self.player.Direction.LEFT] = True
-                if self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE]):
                     self.turns_allowed[self.player.Direction.RIGHT] = True
 
         if self.player.direction == self.player.Direction.LEFT or self.player.direction == self.player.Direction.RIGHT:
             if 22 <= center_x % self.SQUARE_SIZE <= 28:
-                if self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                if is_empty_tile(self.level[(center_y + fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
                     self.turns_allowed[self.player.Direction.DOWN] = True
-                if self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                if is_empty_tile(self.level[(center_y - fudge) // self.SQUARE_SIZE][center_x // self.SQUARE_SIZE]):
                     self.turns_allowed[self.player.Direction.UP] = True
             if 22 <= center_y % self.SQUARE_SIZE <= 28:
-                if self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x - fudge) // self.SQUARE_SIZE]):
                     self.turns_allowed[self.player.Direction.LEFT] = True
-                if self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE] == self.TILE.EMPTY:
+                if is_empty_tile(self.level[center_y // self.SQUARE_SIZE][(center_x + fudge) // self.SQUARE_SIZE]):
                     self.turns_allowed[self.player.Direction.RIGHT] = True
 
     def move_player(self):
@@ -85,10 +84,10 @@ class Game:
     def draw_board(self):
         for row in range(len(self.level)):
             for col in range(len(self.level[row])):
-                if self.level[row][col] == self.TILE.EMPTY:
-                    pygame.draw.rect(self.screen, 'purple', (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
-                if self.level[row][col] == self.TILE.WALL:
-                    pygame.draw.rect(self.screen, 'green', (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
+                if self.level[row][col] == Tile.EMPTY.board_index:
+                    pygame.draw.rect(self.screen, Tile.EMPTY.color, (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
+                if self.level[row][col] == Tile.WALL.board_index:
+                    pygame.draw.rect(self.screen, Tile.WALL.color, (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
 
     def handle_events(self):
         for event in pygame.event.get():
