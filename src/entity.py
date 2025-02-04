@@ -42,20 +42,29 @@ class Entity:
 
     def check_position(self, level, center_x, center_y):
         fudge = 15
+        rows = len(level)
+        cols = len(level[0]) if rows > 0 else 0
+
         self.turns_allowed = [False, False, False, False]
-        
+
         def is_empty_tile(tile):
             return tile == Tile.EMPTY.board_index or tile == Tile.PLAYER.board_index or tile == Tile.ENEMY.board_index
-      
-        if is_empty_tile(level[(center_y + fudge) // self.square_size][center_x // self.square_size]):
+
+        if (center_y + fudge) // self.square_size < rows and is_empty_tile(
+                level[(center_y + fudge) // self.square_size][center_x // self.square_size]):
             self.turns_allowed[self.Direction.DOWN] = True
-        if is_empty_tile(level[(center_y - fudge) // self.square_size][center_x // self.square_size]):
+
+        if (center_y - fudge) // self.square_size >= 0 and is_empty_tile(
+                level[(center_y - fudge) // self.square_size][center_x // self.square_size]):
             self.turns_allowed[self.Direction.UP] = True
 
-        if is_empty_tile(level[center_y // self.square_size][(center_x - fudge) // self.square_size]):
+        if (center_x - fudge) // self.square_size >= 0 and is_empty_tile(
+                level[center_y // self.square_size][(center_x - fudge) // self.square_size]):
             self.turns_allowed[self.Direction.LEFT] = True
-        if is_empty_tile(level[center_y // self.square_size][(center_x + fudge) // self.square_size]):
-            self.turns_allowed[self.Direction.RIGHT] = True 
+
+        if (center_x + fudge) // self.square_size < cols and is_empty_tile(
+                level[center_y // self.square_size][(center_x + fudge) // self.square_size]):
+            self.turns_allowed[self.Direction.RIGHT] = True
 
     def move(self):
         if self.direction == self.Direction.RIGHT and self.turns_allowed[self.Direction.RIGHT]:
@@ -68,7 +77,7 @@ class Entity:
             self.y += self.speed
 
     def paint_tile(self, level, center_x, center_y, WINDOW_WIDTH):
-        if 0 < self.x < WINDOW_WIDTH - self.square_size:
+        if 0 < center_x < WINDOW_WIDTH:
             current_tile = level[center_y // self.square_size][center_x // self.square_size]
             if current_tile == Tile.EMPTY.board_index or current_tile == self.enemy_tile.board_index:
                  level[center_y // self.square_size][center_x // self.square_size] = self.friendly_tile.board_index

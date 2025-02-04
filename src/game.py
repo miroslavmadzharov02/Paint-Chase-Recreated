@@ -2,6 +2,7 @@ import pygame
 from src.tile import Tile
 from src.board import boards
 from src.player import Player
+from src.enemy import Enemy
 from src.bar import Bar
 
 WIN_SVG_PATH = "assets/win.svg"
@@ -28,10 +29,12 @@ class Game:
 
         self.player = Player(self.SQUARE_SIZE, 0, 0)
 
+        self.enemy = Enemy(self.SQUARE_SIZE, 0, self.WINDOW_HEIGHT - self.SQUARE_SIZE - self.BOTTOM_PADDING)
+
         self.bar = Bar(self.WINDOW_HEIGHT, self.WINDOW_WIDTH, self.BOTTOM_PADDING)
 
         self.win_image = pygame.transform.scale(pygame.image.load(WIN_SVG_PATH), (self.SQUARE_SIZE * 10, self.SQUARE_SIZE * 10))
-        self.lose_image = pygame.transform.scale(pygame.image.load(LOSE_SVG_PATH), (self.SQUARE_SIZE, self.SQUARE_SIZE))
+        self.lose_image = pygame.transform.scale(pygame.image.load(LOSE_SVG_PATH), (self.SQUARE_SIZE * 10, self.SQUARE_SIZE * 10))
 
         self.running = True
 
@@ -69,16 +72,6 @@ class Game:
             if self.player.direction_command == i and self.player.turns_allowed[i]:
                 self.player.face(i)
 
-        if self.player.x < 0:
-            self.player.x = 0
-        elif self.player.x > self.WINDOW_WIDTH - self.SQUARE_SIZE:
-            self.player.x = self.WINDOW_WIDTH - self.SQUARE_SIZE
-
-        if self.player.y < 0:
-            self.player.y = 0
-        elif self.player.y > self.WINDOW_HEIGHT - self.SQUARE_SIZE - self.BOTTOM_PADDING:
-            self.player.y = self.WINDOW_HEIGHT - self.SQUARE_SIZE - self.BOTTOM_PADDING
-
     def display_game_over_screen(self, player_won):
         image = self.win_image if player_won else self.lose_image
 
@@ -101,11 +94,16 @@ class Game:
         self.screen.fill('black')
         self.draw_board()
         self.player.draw(self.screen)
+        self.enemy.draw(self.screen)
 
         center_x, center_y = self.player.get_centered_coords()
         self.player.check_position(self.level, center_x, center_y)
         self.player.move()
         self.player.paint_tile(self.level, center_x, center_y, self.WINDOW_WIDTH)
+
+        center_x_enemy, center_y_enemy = self.enemy.get_centered_coords()
+        self.enemy.move(self.level, center_x_enemy, center_y_enemy)
+        self.enemy.paint_tile(self.level, center_x_enemy, center_y_enemy, self.WINDOW_WIDTH)
 
         self.bar.draw(self.screen)
         if self.bar.is_time_over():
