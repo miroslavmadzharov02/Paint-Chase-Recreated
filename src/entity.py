@@ -42,36 +42,20 @@ class Entity:
 
     def check_position(self, level, center_x, center_y):
         fudge = 15
-        lbound = (self.square_size // 2) - 5
-        rbound = (self.square_size // 2) + 5
         self.turns_allowed = [False, False, False, False]
         
         def is_empty_tile(tile):
             return tile == Tile.EMPTY.board_index or tile == Tile.PLAYER.board_index or tile == Tile.ENEMY.board_index
       
-        if self.direction == self.Direction.UP or self.direction == self.Direction.DOWN:
-            if lbound <= center_x % self.square_size <= rbound:
-                if is_empty_tile(level[(center_y + fudge) // self.square_size][center_x // self.square_size]):
-                    self.turns_allowed[self.Direction.DOWN] = True
-                if is_empty_tile(level[(center_y - fudge) // self.square_size][center_x // self.square_size]):
-                    self.turns_allowed[self.Direction.UP] = True
-            if lbound <= center_y % self.square_size <= rbound:
-                if is_empty_tile(level[center_y // self.square_size][(center_x - fudge) // self.square_size]):
-                    self.turns_allowed[self.Direction.LEFT] = True
-                if is_empty_tile(level[center_y // self.square_size][(center_x + fudge) // self.square_size]):
-                    self.turns_allowed[self.Direction.RIGHT] = True
+        if is_empty_tile(level[(center_y + fudge) // self.square_size][center_x // self.square_size]):
+            self.turns_allowed[self.Direction.DOWN] = True
+        if is_empty_tile(level[(center_y - fudge) // self.square_size][center_x // self.square_size]):
+            self.turns_allowed[self.Direction.UP] = True
 
-        if self.direction == self.Direction.LEFT or self.direction == self.Direction.RIGHT:
-            if lbound <= center_x % self.square_size <= rbound:
-                if is_empty_tile(level[(center_y + fudge) // self.square_size][center_x // self.square_size]):
-                    self.turns_allowed[self.Direction.DOWN] = True
-                if is_empty_tile(level[(center_y - fudge) // self.square_size][center_x // self.square_size]):
-                    self.turns_allowed[self.Direction.UP] = True
-            if lbound <= center_y % self.square_size <= rbound:
-                if is_empty_tile(level[center_y // self.square_size][(center_x - fudge) // self.square_size]):
-                    self.turns_allowed[self.Direction.LEFT] = True
-                if is_empty_tile(level[center_y // self.square_size][(center_x + fudge) // self.square_size]):
-                    self.turns_allowed[self.Direction.RIGHT] = True
+        if is_empty_tile(level[center_y // self.square_size][(center_x - fudge) // self.square_size]):
+            self.turns_allowed[self.Direction.LEFT] = True
+        if is_empty_tile(level[center_y // self.square_size][(center_x + fudge) // self.square_size]):
+            self.turns_allowed[self.Direction.RIGHT] = True 
 
     def move(self):
         if self.direction == self.Direction.RIGHT and self.turns_allowed[self.Direction.RIGHT]:
