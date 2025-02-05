@@ -2,7 +2,6 @@
 import pygame
 from src.tile import Tile
 from src.player import Player
-from src.enemy import Enemy
 from src.bar import Bar
 from src.level import Level
 
@@ -29,7 +28,7 @@ class Game:
 
         self.player = Player(self.level.square_size, 0, 0)
 
-        self.enemy = Enemy(self.level.square_size, 0, self.window_height - self.level.square_size - self.bottom_padding)
+        self.enemies = self.level.get_enemies()
 
         self.bar = Bar(self.window_height, self.window_width, self.bottom_padding)
 
@@ -89,10 +88,12 @@ class Game:
                         pygame.quit()
                         return
 
-    def check_player_enemy_collision(self):
+    def get_enemy_from_collision(self):
         player_rect = self.player.get_rect()
-        enemy_rect = self.enemy.get_rect()
-        return player_rect.colliderect(enemy_rect)
+        for enemy in self.enemies:
+            if player_rect.colliderect(enemy.get_rect()):
+                return enemy
+        return None
 
     def update_display(self):
         self.timer.tick(self.FPS)
@@ -107,17 +108,19 @@ class Game:
 
         self.player.check_boost_time()
 
-        if not self.enemy.dead:
-            self.enemy.draw(self.screen)
-            center_x_enemy, center_y_enemy = self.enemy.get_centered_coords()
-            self.enemy.move(self.board, center_x_enemy, center_y_enemy)
-            self.enemy.interact_tile(self.board, center_x_enemy, center_y_enemy, self.window_width)
-        else:
-            if pygame.time.get_ticks() >= self.enemy.respawn_time:
-                self.enemy.respawn(self.board)
+        for enemy in self.enemies:
+            if not enemy.dead:
+                enemy.draw(self.screen)
+                center_x_enemy, center_y_enemy = enemy.get_centered_coords()
+                enemy.move(self.board, center_x_enemy, center_y_enemy)
+                enemy.interact_tile(self.board, center_x_enemy, center_y_enemy, self.window_width)
+            else:
+                if pygame.time.get_ticks() >= enemy.respawn_time:
+                    enemy.respawn(self.board)
 
-        if self.check_player_enemy_collision():
-            self.enemy.die()
+        collision_enemy = self.get_enemy_from_collision()
+        if collision_enemy:
+            collision_enemy.die()
 
         self.bar.draw(self.screen)
         if self.bar.is_time_over():
