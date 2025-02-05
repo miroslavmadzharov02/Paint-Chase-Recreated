@@ -48,20 +48,24 @@ class Entity:
 
         self.turns_allowed = [False, False, False, False]
 
-        if (center_y + fudge) // self.square_size < rows and is_empty_tile(
-                level[(center_y + fudge) // self.square_size][center_x // self.square_size]):
+        tile_below_row = (center_y + fudge) // self.square_size
+        tile_below_col = center_x // self.square_size
+        if tile_below_row < rows and is_empty_tile(level[tile_below_row][tile_below_col]):
             self.turns_allowed[self.Direction.DOWN] = True
 
-        if (center_y - fudge) // self.square_size >= 0 and is_empty_tile(
-                level[(center_y - fudge) // self.square_size][center_x // self.square_size]):
+        tile_above_row = (center_y - fudge) // self.square_size
+        tile_above_col = center_x // self.square_size
+        if tile_above_row >= 0 and is_empty_tile(level[tile_above_row][tile_above_col]):
             self.turns_allowed[self.Direction.UP] = True
 
-        if (center_x - fudge) // self.square_size >= 0 and is_empty_tile(
-                level[center_y // self.square_size][(center_x - fudge) // self.square_size]):
+        left_tile_row = center_y // self.square_size
+        left_tile_col = (center_x - fudge) // self.square_size
+        if left_tile_col >= 0 and is_empty_tile(level[left_tile_row][left_tile_col]):
             self.turns_allowed[self.Direction.LEFT] = True
 
-        if (center_x + fudge) // self.square_size < cols and is_empty_tile(
-                level[center_y // self.square_size][(center_x + fudge) // self.square_size]):
+        right_tile_row = center_y // self.square_size
+        right_tile_col = (center_x + fudge) // self.square_size
+        if right_tile_col < cols and is_empty_tile(level[right_tile_row][right_tile_col]):
             self.turns_allowed[self.Direction.RIGHT] = True
 
     def move(self):
