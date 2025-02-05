@@ -25,10 +25,10 @@ class Enemy(Entity):
         self.friendly_tile = Tile.ENEMY
         self.enemy_tile = Tile.PLAYER
 
-    def move(self, level, center_x, center_y):
-        self.check_position(level, center_x, center_y)
+    def move(self, board, center_x, center_y):
+        self.check_position(board, center_x, center_y)
 
-        self.direction_generator = pick_direction_generator(self, level, center_x, center_y)
+        self.direction_generator = pick_direction_generator(self, board, center_x, center_y)
         self.direction = next(self.direction_generator, self.previous_direction)
         self.previous_direction = self.direction
 
@@ -38,6 +38,6 @@ class Enemy(Entity):
         self.dead = True
         self.respawn_time = pygame.time.get_ticks() + self.respawn_delay_ms
 
-    def respawn(self, level):
+    def respawn(self, board):
         self.dead = False
-        self.x, self.y = get_random_tile_coordinate(level, Tile.RESPAWN.board_index, self.square_size)
+        self.x, self.y = get_random_tile_coordinate(board, Tile.RESPAWN.board_index, self.square_size)

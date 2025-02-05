@@ -27,7 +27,7 @@ class Game:
         self.timer = pygame.time.Clock()
 
         self.current_level_index = 0
-        self.level = boards[self.current_level_index]
+        self.board = boards[self.current_level_index]
 
         self.player = Player(self.SQUARE_SIZE, 0, 0)
 
@@ -41,10 +41,10 @@ class Game:
         self.running = True
 
     def draw_board(self):
-        for row in range(len(self.level)):
-            for col in range(len(self.level[row])):
+        for row in range(len(self.board)):
+            for col in range(len(self.board[row])):
                 for tile in Tile:
-                    if self.level[row][col] == tile.board_index:
+                    if self.board[row][col] == tile.board_index:
                         pygame.draw.rect(self.screen, tile.color, (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
 
     def handle_events(self):
@@ -103,27 +103,27 @@ class Game:
         self.player.draw(self.screen)
 
         center_x, center_y = self.player.get_centered_coords()
-        self.player.check_position(self.level, center_x, center_y)
+        self.player.check_position(self.board, center_x, center_y)
         self.player.move()
-        self.player.interact_tile(self.level, center_x, center_y, self.WINDOW_WIDTH)
+        self.player.interact_tile(self.board, center_x, center_y, self.WINDOW_WIDTH)
 
         self.player.check_boost_time()
 
         if not self.enemy.dead:
             self.enemy.draw(self.screen)
             center_x_enemy, center_y_enemy = self.enemy.get_centered_coords()
-            self.enemy.move(self.level, center_x_enemy, center_y_enemy)
-            self.enemy.interact_tile(self.level, center_x_enemy, center_y_enemy, self.WINDOW_WIDTH)
+            self.enemy.move(self.board, center_x_enemy, center_y_enemy)
+            self.enemy.interact_tile(self.board, center_x_enemy, center_y_enemy, self.WINDOW_WIDTH)
         else:
             if pygame.time.get_ticks() >= self.enemy.respawn_time:
-                self.enemy.respawn(self.level)
+                self.enemy.respawn(self.board)
 
         if self.check_player_enemy_collision():
             self.enemy.die()
 
         self.bar.draw(self.screen)
         if self.bar.is_time_over():
-            self.display_game_over_screen(self.player.check_player_win(self.level))
+            self.display_game_over_screen(self.player.check_player_win(self.board))
 
         pygame.display.flip()
 

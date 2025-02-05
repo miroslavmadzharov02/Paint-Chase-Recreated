@@ -19,8 +19,8 @@ class Player(Entity):
     def set_command(self, direction_command):
         self.direction_command = direction_command
     
-    def check_player_win(self, level):
-        count_enemy = sum(row.count(Tile.ENEMY.board_index) for row in level)
-        count_player = sum(row.count(Tile.PLAYER.board_index) for row in level)
+    def check_player_win(self, board):
+        count_enemy = sum(row.count(Tile.ENEMY.board_index) for row in board)
+        count_player = sum(row.count(Tile.PLAYER.board_index) for row in board)
 
         return count_player > count_enemy

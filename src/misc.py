@@ -13,26 +13,26 @@ def is_paintable_tile(tile):
 def is_boost_tile(tile):
       return tile in [Tile.BOOST.board_index]
 
-def get_next_tile(direction, level, entity, center_x, center_y):
+def get_next_tile(direction, board, entity, center_x, center_y):
             fudge = 15
             if direction == entity.Direction.UP:
-                return level[(center_y - fudge) // entity.square_size][center_x // entity.square_size]
+                return board[(center_y - fudge) // entity.square_size][center_x // entity.square_size]
             elif direction == entity.Direction.DOWN:
-                return level[(center_y + fudge) // entity.square_size][center_x // entity.square_size]
+                return board[(center_y + fudge) // entity.square_size][center_x // entity.square_size]
             elif direction == entity.Direction.LEFT:
-                return level[center_y // entity.square_size][(center_x - fudge) // entity.square_size]
+                return board[center_y // entity.square_size][(center_x - fudge) // entity.square_size]
             elif direction == entity.Direction.RIGHT:
-                return level[center_y // entity.square_size][(center_x + fudge) // entity.square_size]
+                return board[center_y // entity.square_size][(center_x + fudge) // entity.square_size]
             return None
 
-def get_tile_coordinates(level, tile_type, square_size):
+def get_tile_coordinates(board, tile_type, square_size):
         coordinates = []
-        for row in range(len(level)):
-            for col in range(len(level[row])):
-                if level[row][col] == tile_type:
+        for row in range(len(board)):
+            for col in range(len(board[row])):
+                if board[row][col] == tile_type:
                     coordinates.append((col * square_size, row * square_size))
         return coordinates
 
-def get_random_tile_coordinate(level, tile_type, square_size):
-        coordinates = get_tile_coordinates(level, tile_type, square_size)
+def get_random_tile_coordinate(board, tile_type, square_size):
+        coordinates = get_tile_coordinates(board, tile_type, square_size)
         return random.choice(coordinates) if coordinates else None
