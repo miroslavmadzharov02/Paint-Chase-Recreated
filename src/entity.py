@@ -1,7 +1,8 @@
 from enum import Enum
 import pygame
-from src.tile import Tile
 from abc import abstractmethod
+from src.tile import Tile
+from src.misc import is_empty_tile
 
 class Entity:
     class Direction(int, Enum):
@@ -46,9 +47,6 @@ class Entity:
         cols = len(level[0]) if rows > 0 else 0
 
         self.turns_allowed = [False, False, False, False]
-
-        def is_empty_tile(tile):
-            return tile == Tile.EMPTY.board_index or tile == Tile.PLAYER.board_index or tile == Tile.ENEMY.board_index
 
         if (center_y + fudge) // self.square_size < rows and is_empty_tile(
                 level[(center_y + fudge) // self.square_size][center_x // self.square_size]):

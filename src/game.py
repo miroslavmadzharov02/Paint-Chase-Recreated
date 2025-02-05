@@ -1,3 +1,4 @@
+"""pygame module"""
 import pygame
 from src.tile import Tile
 from src.board import boards
@@ -9,6 +10,7 @@ WIN_SVG_PATH = "assets/win.svg"
 LOSE_SVG_PATH = "assets/lose.svg"
 
 class Game:
+    """Game class"""
     BOTTOM_PADDING = 50
     WIDTH_TOTAL_TILES = 15
     HEIGHT_TOTAL_TILES = 9

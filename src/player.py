@@ -5,6 +5,7 @@ from src.tile import Tile
 PLAYER_SVG_PATH = 'assets/player_car.svg'
 
 class Player(Entity):
+    """Player class"""
     def __init__(self, square_size, x, y):
         image = pygame.transform.scale(pygame.image.load(PLAYER_SVG_PATH), (square_size, square_size))
         super().__init__(square_size, image, x, y)
