@@ -1,7 +1,14 @@
+import random
 from src.tile import Tile
 
 def is_empty_tile(tile):
-            return tile == Tile.EMPTY.board_index or tile == Tile.PLAYER.board_index or tile == Tile.ENEMY.board_index
+            return tile in [Tile.EMPTY.board_index, Tile.ENEMY.board_index, 
+                            Tile.PLAYER.board_index, Tile.RESPAWN.board_index,
+                            Tile.BOOST.board_index]
+
+def is_paintable_tile(tile):
+       return tile in [Tile.EMPTY.board_index, Tile.ENEMY.board_index, 
+                       Tile.PLAYER.board_index]
 
 def get_next_tile(direction, level, entity, center_x, center_y):
             fudge = 15
@@ -14,3 +21,15 @@ def get_next_tile(direction, level, entity, center_x, center_y):
             elif direction == entity.Direction.RIGHT:
                 return level[center_y // entity.square_size][(center_x + fudge) // entity.square_size]
             return None
+
+def get_tile_coordinates(level, tile_type, square_size):
+        coordinates = []
+        for row in range(len(level)):
+            for col in range(len(level[row])):
+                if level[row][col] == tile_type:
+                    coordinates.append((col * square_size, row * square_size))
+        return coordinates
+
+def get_random_tile_coordinate(level, tile_type, square_size):
+        coordinates = get_tile_coordinates(level, tile_type, square_size)
+        return random.choice(coordinates) if coordinates else None

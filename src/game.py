@@ -5,6 +5,7 @@ from src.board import boards
 from src.player import Player
 from src.enemy import Enemy
 from src.bar import Bar
+from src.misc import get_random_tile_coordinate
 
 WIN_SVG_PATH = "assets/win.svg"
 LOSE_SVG_PATH = "assets/lose.svg"
@@ -91,21 +92,41 @@ class Game:
                         pygame.quit()
                         return
 
+    def check_player_enemy_collision(self):
+        player_rect = self.player.get_rect()
+        enemy_rect = self.enemy.get_rect()
+        return player_rect.colliderect(enemy_rect)
+
+    def kill_enemy(self):
+        self.enemy.dead = True
+        self.enemy.respawn_time = pygame.time.get_ticks() + self.enemy.respawn_delay_ms
+
+    def respawn_enemy(self):
+        self.enemy.dead = False
+        self.enemy.x, self.enemy.y = get_random_tile_coordinate(self.level, Tile.RESPAWN.board_index, self.SQUARE_SIZE)
+
     def update_display(self):
         self.timer.tick(self.FPS)
         self.screen.fill('black')
         self.draw_board()
         self.player.draw(self.screen)
-        self.enemy.draw(self.screen)
 
         center_x, center_y = self.player.get_centered_coords()
         self.player.check_position(self.level, center_x, center_y)
         self.player.move()
         self.player.paint_tile(self.level, center_x, center_y, self.WINDOW_WIDTH)
 
-        center_x_enemy, center_y_enemy = self.enemy.get_centered_coords()
-        self.enemy.move(self.level, center_x_enemy, center_y_enemy)
-        self.enemy.paint_tile(self.level, center_x_enemy, center_y_enemy, self.WINDOW_WIDTH)
+        if not self.enemy.dead:
+            self.enemy.draw(self.screen)
+            center_x_enemy, center_y_enemy = self.enemy.get_centered_coords()
+            self.enemy.move(self.level, center_x_enemy, center_y_enemy)
+            self.enemy.paint_tile(self.level, center_x_enemy, center_y_enemy, self.WINDOW_WIDTH)
+        else:
+            if pygame.time.get_ticks() >= self.enemy.respawn_time:
+                self.respawn_enemy()
+
+        if self.check_player_enemy_collision():
+            self.kill_enemy()
 
         self.bar.draw(self.screen)
         if self.bar.is_time_over():

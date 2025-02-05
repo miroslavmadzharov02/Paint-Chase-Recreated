@@ -1,8 +1,7 @@
 from enum import Enum
 import pygame
 from abc import abstractmethod
-from src.tile import Tile
-from src.misc import is_empty_tile
+from src.misc import is_empty_tile, is_paintable_tile
 
 class Entity:
     class Direction(int, Enum):
@@ -40,6 +39,10 @@ class Entity:
         elif self.direction == Entity.Direction.DOWN:
             rotated_image = pygame.transform.rotate(self.image, 270)
             screen.blit(rotated_image, (self.x, self.y))
+
+    def get_rect(self):
+        center_x, center_y = self.get_centered_coords()
+        return pygame.Rect(center_x, center_y, self.square_size, self.square_size)
 
     def check_position(self, level, center_x, center_y):
         fudge = 15
@@ -81,7 +84,7 @@ class Entity:
     def paint_tile(self, level, center_x, center_y, WINDOW_WIDTH):
         if 0 < center_x < WINDOW_WIDTH:
             current_tile = level[center_y // self.square_size][center_x // self.square_size]
-            if current_tile == Tile.EMPTY.board_index or current_tile == self.enemy_tile.board_index:
+            if is_paintable_tile(current_tile):
                  level[center_y // self.square_size][center_x // self.square_size] = self.friendly_tile.board_index
 
     def face(self, direction):

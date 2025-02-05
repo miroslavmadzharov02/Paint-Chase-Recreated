@@ -1,4 +1,3 @@
-import random
 import pygame
 from src.entity import Entity
 from src.tile import Tile
@@ -12,6 +11,10 @@ class Enemy(Entity):
         image = pygame.transform.scale(pygame.image.load(ENEMY_SVG_PATH), (square_size, square_size))
         super().__init__(square_size, image, x, y)
 
+        self.dead = False
+        self.respawn_delay_ms = 2000
+        self.respawn_time = 0
+        
         self.previous_direction = self.direction
 
         self.direction_generator = None
@@ -22,7 +25,9 @@ class Enemy(Entity):
 
     def move(self, level, center_x, center_y):
         self.check_position(level, center_x, center_y)
+
         self.direction_generator = pick_direction_generator(self, level, center_x, center_y)
         self.direction = next(self.direction_generator, self.previous_direction)
         self.previous_direction = self.direction
+
         super().move()

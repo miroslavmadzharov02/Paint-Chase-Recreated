@@ -10,8 +10,8 @@ class Bar:
         self.bar_height = BOTTOM_PADDING
         self.total_time = SECONDS * 1000
         self.start_ticks = pygame.time.get_ticks()
-        self.main_color = 'green'
-        self.alt_color = 'yellow'
+        self.main_color = 'forestgreen'
+        self.alt_color = 'goldenrod'
 
     def draw(self, screen):
         elapsed_time = pygame.time.get_ticks() - self.start_ticks

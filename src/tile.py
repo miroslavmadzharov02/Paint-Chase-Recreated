@@ -4,7 +4,9 @@ class Tile(Enum):
         self.board_index = board_index
         self.color = color
 
-    EMPTY = (0, 'purple')
-    WALL = (1, 'green')
-    ENEMY = (2, 'red')
-    PLAYER = (3, 'blue')
+    EMPTY = (0, 'darkslateblue')
+    WALL = (1, 'forestgreen')
+    ENEMY = (2, 'crimson')
+    PLAYER = (3, 'royalblue')
+    RESPAWN = (4, 'mediumaquamarine')
+    BOOST = (5, 'goldenrod')
