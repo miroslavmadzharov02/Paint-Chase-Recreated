@@ -105,13 +105,15 @@ class Game:
         center_x, center_y = self.player.get_centered_coords()
         self.player.check_position(self.level, center_x, center_y)
         self.player.move()
-        self.player.paint_tile(self.level, center_x, center_y, self.WINDOW_WIDTH)
+        self.player.interact_tile(self.level, center_x, center_y, self.WINDOW_WIDTH)
+
+        self.player.check_boost_time()
 
         if not self.enemy.dead:
             self.enemy.draw(self.screen)
             center_x_enemy, center_y_enemy = self.enemy.get_centered_coords()
             self.enemy.move(self.level, center_x_enemy, center_y_enemy)
-            self.enemy.paint_tile(self.level, center_x_enemy, center_y_enemy, self.WINDOW_WIDTH)
+            self.enemy.interact_tile(self.level, center_x_enemy, center_y_enemy, self.WINDOW_WIDTH)
         else:
             if pygame.time.get_ticks() >= self.enemy.respawn_time:
                 self.enemy.respawn(self.level)

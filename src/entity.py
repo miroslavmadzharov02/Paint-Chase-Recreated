@@ -1,7 +1,7 @@
 from enum import Enum
 import pygame
 from abc import abstractmethod
-from src.misc import is_empty_tile, is_paintable_tile
+from src.misc import is_empty_tile, is_paintable_tile, is_boost_tile
 
 class Entity:
     class Direction(int, Enum):
@@ -17,7 +17,12 @@ class Entity:
         self.y = y
         self.direction = Entity.Direction.RIGHT
         self.turns_allowed = [False, False, False, False]
-        self.speed = 2
+        
+        self.base_speed = 2
+        self.current_speed = self.base_speed
+        self.boost_speed = 1
+        self.boost_time = 0 
+        self.boost_duration = 1000  
 
         self.friendly_tile = None
         self.enemy_tile = None
@@ -73,19 +78,32 @@ class Entity:
 
     def move(self):
         if self.direction == self.Direction.RIGHT and self.turns_allowed[self.Direction.RIGHT]:
-            self.x += self.speed
+            self.x += self.current_speed
         elif self.direction == self.Direction.LEFT and self.turns_allowed[self.Direction.LEFT]:
-            self.x -= self.speed
+            self.x -= self.current_speed
         if self.direction == self.Direction.UP and self.turns_allowed[self.Direction.UP]:
-            self.y -= self.speed
+            self.y -= self.current_speed
         elif self.direction == self.Direction.DOWN and self.turns_allowed[self.Direction.DOWN]:
-            self.y += self.speed
+            self.y += self.current_speed
 
-    def paint_tile(self, level, center_x, center_y, WINDOW_WIDTH):
+    def interact_tile(self, level, center_x, center_y, WINDOW_WIDTH):
         if 0 < center_x < WINDOW_WIDTH:
             current_tile = level[center_y // self.square_size][center_x // self.square_size]
             if is_paintable_tile(current_tile):
                  level[center_y // self.square_size][center_x // self.square_size] = self.friendly_tile.board_index
+            if is_boost_tile(current_tile):
+                if self.boost_time == 0:
+                    self.current_speed += self.boost_speed 
+                    self.boost_time = pygame.time.get_ticks()    
+
+    def reset_speed(self):
+        self.current_speed = self.base_speed
+
+    def check_boost_time(self):
+        if self.boost_time != 0:
+            if pygame.time.get_ticks() - self.boost_time > self.boost_duration:
+                self.reset_speed() 
+                self.boost_time = 0 
 
     def face(self, direction):
         self.direction = direction

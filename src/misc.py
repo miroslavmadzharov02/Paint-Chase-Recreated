@@ -10,6 +10,9 @@ def is_paintable_tile(tile):
        return tile in [Tile.EMPTY.board_index, Tile.ENEMY.board_index, 
                        Tile.PLAYER.board_index]
 
+def is_boost_tile(tile):
+      return tile in [Tile.BOOST.board_index]
+
 def get_next_tile(direction, level, entity, center_x, center_y):
             fudge = 15
             if direction == entity.Direction.UP:
