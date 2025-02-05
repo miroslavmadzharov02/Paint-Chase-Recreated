@@ -1,42 +1,40 @@
 """pygame module"""
 import pygame
 from src.tile import Tile
-from src.board import boards
 from src.player import Player
 from src.enemy import Enemy
 from src.bar import Bar
+from src.level import Level
 
 WIN_SVG_PATH = "assets/win.svg"
 LOSE_SVG_PATH = "assets/lose.svg"
 
 class Game:
     """Game class"""
-    BOTTOM_PADDING = 50
-    WIDTH_TOTAL_TILES = 15
-    HEIGHT_TOTAL_TILES = 9
-    SQUARE_SIZE = 50
     FPS = 60
 
-    def __init__(self):
+    def __init__(self, level_index):
         pygame.init()
 
-        self.WINDOW_WIDTH = self.WIDTH_TOTAL_TILES * self.SQUARE_SIZE
-        self.WINDOW_HEIGHT = self.HEIGHT_TOTAL_TILES * self.SQUARE_SIZE + self.BOTTOM_PADDING
+        self.level = Level(level_index)
 
-        self.screen = pygame.display.set_mode([self.WINDOW_WIDTH, self.WINDOW_HEIGHT])
+        self.bottom_padding = self.level.square_size
+        self.window_width = self.level.cols_count * self.level.square_size
+        self.window_height = self.level.rows_count * self.level.square_size + self.bottom_padding
+
+        self.screen = pygame.display.set_mode([self.window_width, self.window_height])
         self.timer = pygame.time.Clock()
 
-        self.current_level_index = 0
-        self.board = boards[self.current_level_index]
+        self.board = self.level.board
 
-        self.player = Player(self.SQUARE_SIZE, 0, 0)
+        self.player = Player(self.level.square_size, 0, 0)
 
-        self.enemy = Enemy(self.SQUARE_SIZE, 0, self.WINDOW_HEIGHT - self.SQUARE_SIZE - self.BOTTOM_PADDING)
+        self.enemy = Enemy(self.level.square_size, 0, self.window_height - self.level.square_size - self.bottom_padding)
 
-        self.bar = Bar(self.WINDOW_HEIGHT, self.WINDOW_WIDTH, self.BOTTOM_PADDING)
+        self.bar = Bar(self.window_height, self.window_width, self.bottom_padding)
 
-        self.win_image = pygame.transform.scale(pygame.image.load(WIN_SVG_PATH), (self.SQUARE_SIZE * 10, self.SQUARE_SIZE * 10))
-        self.lose_image = pygame.transform.scale(pygame.image.load(LOSE_SVG_PATH), (self.SQUARE_SIZE * 10, self.SQUARE_SIZE * 10))
+        self.win_image = pygame.transform.scale(pygame.image.load(WIN_SVG_PATH), (self.level.square_size * 10, self.level.square_size * 10))
+        self.lose_image = pygame.transform.scale(pygame.image.load(LOSE_SVG_PATH), (self.level.square_size * 10, self.level.square_size * 10))
 
         self.running = True
 
@@ -45,7 +43,7 @@ class Game:
             for col in range(len(self.board[row])):
                 for tile in Tile:
                     if self.board[row][col] == tile.board_index:
-                        pygame.draw.rect(self.screen, tile.color, (col * self.SQUARE_SIZE, row * self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
+                        pygame.draw.rect(self.screen, tile.color, (col * self.level.square_size, row * self.level.square_size, self.level.square_size, self.level.square_size))
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -105,7 +103,7 @@ class Game:
         center_x, center_y = self.player.get_centered_coords()
         self.player.check_position(self.board, center_x, center_y)
         self.player.move()
-        self.player.interact_tile(self.board, center_x, center_y, self.WINDOW_WIDTH)
+        self.player.interact_tile(self.board, center_x, center_y, self.window_width)
 
         self.player.check_boost_time()
 
@@ -113,7 +111,7 @@ class Game:
             self.enemy.draw(self.screen)
             center_x_enemy, center_y_enemy = self.enemy.get_centered_coords()
             self.enemy.move(self.board, center_x_enemy, center_y_enemy)
-            self.enemy.interact_tile(self.board, center_x_enemy, center_y_enemy, self.WINDOW_WIDTH)
+            self.enemy.interact_tile(self.board, center_x_enemy, center_y_enemy, self.window_width)
         else:
             if pygame.time.get_ticks() >= self.enemy.respawn_time:
                 self.enemy.respawn(self.board)
