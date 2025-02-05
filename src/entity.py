@@ -89,7 +89,7 @@ class Entity:
     def interact_tile(self, board, center_x, center_y, WINDOW_WIDTH):
         if 0 < center_x < WINDOW_WIDTH:
             current_tile = board[center_y // self.square_size][center_x // self.square_size]
-            if is_paintable_tile(current_tile):
+            if is_paintable_tile(current_tile, self):
                  board[center_y // self.square_size][center_x // self.square_size] = self.friendly_tile.board_index
             if is_boost_tile(current_tile):
                 if self.boost_time == 0:

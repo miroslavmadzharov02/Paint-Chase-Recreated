@@ -1,4 +1,4 @@
-board_enemy_counts = [2, 2]
+board_enemy_counts = [1, 2]
 
 boards = [
     [
