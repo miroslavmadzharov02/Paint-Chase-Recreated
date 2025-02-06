@@ -2,7 +2,7 @@ import pygame
 from src.board import boards, board_enemy_counts
 from src.tile import Tile
 from src.enemy import Enemy
-from src.misc import get_random_tile_coordinate
+from src.board_utils import get_random_tile_coordinate
 
 class Level:
     def __init__(self, level_index: int) -> None:

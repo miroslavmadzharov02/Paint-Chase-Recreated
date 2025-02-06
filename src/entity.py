@@ -1,7 +1,6 @@
 from enum import Enum
 import pygame
-from src.tile import Tile
-from src.misc import is_empty_tile, is_paintable_tile, is_boost_tile
+from src.tile import Tile, is_empty_tile, is_paintable_tile, is_boost_tile
 
 class Entity:
     class Direction(int, Enum):

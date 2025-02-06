@@ -5,17 +5,6 @@ from src.tile import Tile
 if TYPE_CHECKING:
     from src.entity import Entity
 
-def is_empty_tile(tile: int) -> bool:
-    return tile in {Tile.EMPTY.board_index, Tile.ENEMY.board_index, 
-                    Tile.PLAYER.board_index, Tile.RESPAWN.board_index,
-                    Tile.BOOST.board_index}
-
-def is_paintable_tile(tile: int, entity: "Entity") -> bool:
-    return tile in {Tile.EMPTY.board_index, entity.enemy_tile.board_index}
-
-def is_boost_tile(tile: int) -> bool:
-    return tile in {Tile.BOOST.board_index}
-
 def get_surrounding_tiles(board: list[list[int]], entity: "Entity", center_x: int, center_y: int) -> list[tuple[Tile, int]]:
     fudge = entity.square_size - (entity.square_size // 10)
     rows = len(board)

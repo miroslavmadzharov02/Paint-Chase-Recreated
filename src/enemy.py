@@ -1,8 +1,8 @@
 import pygame
 import random
 from src.entity import Entity
-from src.tile import Tile
-from src.misc import get_surrounding_tiles, is_paintable_tile, is_empty_tile, get_random_tile_coordinate
+from src.tile import Tile, is_paintable_tile, is_empty_tile
+from src.board_utils import get_surrounding_tiles, get_random_tile_coordinate
 
 ENEMY_SVG_PATH = 'assets/enemy_car.svg'
 
