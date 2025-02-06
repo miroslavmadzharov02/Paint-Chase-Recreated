@@ -86,8 +86,8 @@ class Entity:
         elif self.direction == self.Direction.DOWN and self.turns_allowed[self.Direction.DOWN]:
             self.y += self.current_speed
 
-    def interact_tile(self, board, center_x, center_y, WINDOW_WIDTH):
-        if 0 < center_x < WINDOW_WIDTH:
+    def interact_tile(self, board, center_x, center_y, window_width):
+        if 0 < center_x < window_width:
             current_tile = board[center_y // self.square_size][center_x // self.square_size]
             if is_paintable_tile(current_tile, self):
                  board[center_y // self.square_size][center_x // self.square_size] = self.friendly_tile.board_index

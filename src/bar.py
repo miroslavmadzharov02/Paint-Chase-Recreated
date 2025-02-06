@@ -1,15 +1,18 @@
 import pygame
 
 class Bar:
-    def __init__(self, WINDOW_HEIGHT, WINDOW_WIDTH, BOTTOM_PADDING):
+    def __init__(self, window_height, window_width, bottom_padding):
         SECONDS = 15
 
         self.bar_x = 0
-        self.bar_y = WINDOW_HEIGHT - BOTTOM_PADDING
-        self.bar_width = WINDOW_WIDTH
-        self.bar_height = BOTTOM_PADDING
+        self.bar_y = window_height - bottom_padding
+
+        self.bar_width = window_width
+        self.bar_height = bottom_padding
+
         self.total_time = SECONDS * 1000
         self.start_ticks = pygame.time.get_ticks()
+        
         self.main_color = 'gray17'
         self.alt_color = 'ghostwhite'
 

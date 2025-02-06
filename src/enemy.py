@@ -1,7 +1,7 @@
 import pygame
 from src.entity import Entity
 from src.tile import Tile
-from src.enemy_movement import pick_direction_generator
+from src.enemy_movement import get_next_direction
 from src.misc import get_random_tile_coordinate
 
 ENEMY_SVG_PATH = 'assets/enemy_car.svg'
@@ -16,10 +16,7 @@ class Enemy(Entity):
         self.respawn_delay_ms = 2000
         self.respawn_time = 0
         
-        self.speed = 1
         self.previous_direction = self.direction
-
-        self.direction_generator = None
 
     def set_tile_attributes(self):
         self.friendly_tile = Tile.ENEMY
@@ -27,9 +24,8 @@ class Enemy(Entity):
 
     def move(self, board, center_x, center_y):
         self.check_position(board, center_x, center_y)
-
-        self.direction_generator = pick_direction_generator(self, board, center_x, center_y)
-        self.direction = next(self.direction_generator, self.previous_direction)
+        
+        self.direction = get_next_direction(self, board, center_x, center_y)
         self.previous_direction = self.direction
 
         super().move()

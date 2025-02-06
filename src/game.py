@@ -1,6 +1,5 @@
 """pygame module"""
 import pygame
-from src.tile import Tile
 from src.player import Player
 from src.bar import Bar
 from src.level import Level
