@@ -1,5 +1,6 @@
 """pygame module"""
 import pygame
+import logging
 from src.player import Player
 from src.bar import Bar
 from src.level import Level
@@ -41,28 +42,30 @@ class Game:
         self.running = True
 
     def handle_events(self):
+        key_map = {
+        pygame.K_RIGHT: Player.Direction.RIGHT,
+        pygame.K_LEFT: Player.Direction.LEFT,
+        pygame.K_DOWN: Player.Direction.DOWN,
+        pygame.K_UP: Player.Direction.UP,
+                    }
+
+        if self.multiplayer:
+            key_map_player2 = {
+                pygame.K_d: Player.Direction.RIGHT,
+                pygame.K_a: Player.Direction.LEFT,
+                pygame.K_s: Player.Direction.DOWN,
+                pygame.K_w: Player.Direction.UP,
+                                }
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    self.player.set_command(Player.Direction.RIGHT)
-                if event.key == pygame.K_LEFT:
-                    self.player.set_command(Player.Direction.LEFT)
-                if event.key == pygame.K_DOWN:
-                    self.player.set_command(Player.Direction.DOWN)
-                if event.key == pygame.K_UP:
-                    self.player.set_command(Player.Direction.UP)
 
-                if self.multiplayer:
-                    if event.key == pygame.K_d:
-                        self.player2.set_command(Player.Direction.RIGHT)
-                    if event.key == pygame.K_a:
-                        self.player2.set_command(Player.Direction.LEFT)
-                    if event.key == pygame.K_s:
-                        self.player2.set_command(Player.Direction.DOWN)
-                    if event.key == pygame.K_w:
-                        self.player2.set_command(Player.Direction.UP)
+            if event.type == pygame.KEYDOWN:
+                if event.key in key_map:
+                    self.player.set_command(key_map[event.key])
+                if self.multiplayer and event.key in key_map_player2:
+                    self.player2.set_command(key_map_player2[event.key])
 
         for player in [self.player, self.player2] if self.multiplayer else [self.player]:
             for i in range(len(player.Direction)):
@@ -136,7 +139,12 @@ class Game:
         pygame.display.flip()
 
     def run(self):
-        while self.running:
-            self.handle_events()
-            self.update_display()
-        pygame.quit()
+        logger = logging.getLogger()
+
+        try:
+            while self.running:
+                self.handle_events()
+                self.update_display()
+            pygame.quit()
+        except Exception as e:
+            logger.error(e)

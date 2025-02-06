@@ -28,22 +28,23 @@ class Entity:
         self.enemy_tile = None
         self.set_tile_attributes()
 
+        if any(tile is None for tile in (self.friendly_tile, self.enemy_tile)):
+            raise ValueError("Tile properties have not been set for entity.")
+
     @abstractmethod
     def set_tile_attributes(self):
         pass
 
     def draw(self, screen):
-        if self.direction == Entity.Direction.RIGHT:
-            screen.blit(self.image, (self.x, self.y))
-        elif self.direction == Entity.Direction.LEFT:
-            flipped_image = pygame.transform.flip(self.image, True, False)
-            screen.blit(flipped_image, (self.x, self.y))
-        elif self.direction == Entity.Direction.UP:
-            rotated_image = pygame.transform.rotate(self.image, 90)
-            screen.blit(rotated_image, (self.x, self.y))
-        elif self.direction == Entity.Direction.DOWN:
-            rotated_image = pygame.transform.rotate(self.image, 270)
-            screen.blit(rotated_image, (self.x, self.y))
+        direction_map = {
+        Entity.Direction.RIGHT: lambda: self.image,
+        Entity.Direction.LEFT: lambda: pygame.transform.flip(self.image, True, False),
+        Entity.Direction.UP: lambda: pygame.transform.rotate(self.image, 90),
+        Entity.Direction.DOWN: lambda: pygame.transform.rotate(self.image, 270),
+                        }
+
+        transformed_image = direction_map.get(self.direction, lambda: self.image)()
+        screen.blit(transformed_image, (self.x, self.y))
 
     def get_rect(self):
         center_x, center_y = self.get_centered_coords()
@@ -56,25 +57,21 @@ class Entity:
 
         self.turns_allowed = [False, False, False, False]
 
-        tile_below_row = (center_y + fudge) // self.square_size
-        tile_below_col = center_x // self.square_size
-        if tile_below_row < rows and is_empty_tile(board[tile_below_row][tile_below_col]):
-            self.turns_allowed[self.Direction.DOWN] = True
+        direction_map = {
+            self.Direction.DOWN: (center_y + fudge, center_x),
+            self.Direction.UP: (center_y - fudge, center_x),
+            self.Direction.LEFT: (center_y, center_x - fudge),
+            self.Direction.RIGHT: (center_y, center_x + fudge),
+        }
 
-        tile_above_row = (center_y - fudge) // self.square_size
-        tile_above_col = center_x // self.square_size
-        if tile_above_row >= 0 and is_empty_tile(board[tile_above_row][tile_above_col]):
-            self.turns_allowed[self.Direction.UP] = True
+        def in_bounds(row, col):
+            return 0 <= row < rows and 0 <= col < cols
 
-        left_tile_row = center_y // self.square_size
-        left_tile_col = (center_x - fudge) // self.square_size
-        if left_tile_col >= 0 and is_empty_tile(board[left_tile_row][left_tile_col]):
-            self.turns_allowed[self.Direction.LEFT] = True
-
-        right_tile_row = center_y // self.square_size
-        right_tile_col = (center_x + fudge) // self.square_size
-        if right_tile_col < cols and is_empty_tile(board[right_tile_row][right_tile_col]):
-            self.turns_allowed[self.Direction.RIGHT] = True
+        for direction, (y_offset, x_offset) in direction_map.items():
+            tile_row = (y_offset) // self.square_size
+            tile_col = (x_offset) // self.square_size
+            if in_bounds(tile_row, tile_col) and is_empty_tile(board[tile_row][tile_col]):
+                self.turns_allowed[direction] = True
 
     def move(self):
         if self.direction == self.Direction.RIGHT and self.turns_allowed[self.Direction.RIGHT]:
