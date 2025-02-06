@@ -95,10 +95,7 @@ class Game:
                 return enemy
         return None
 
-    def update_display(self):
-        self.timer.tick(self.FPS)
-        self.screen.fill('black')
-        self.draw_board()
+    def player_logic(self):
         self.player.draw(self.screen)
 
         center_x, center_y = self.player.get_centered_coords()
@@ -108,6 +105,7 @@ class Game:
 
         self.player.check_boost_time()
 
+    def enemy_logic(self):
         for enemy in self.enemies:
             if not enemy.dead:
                 enemy.draw(self.screen)
@@ -122,6 +120,14 @@ class Game:
         if collision_enemy:
             collision_enemy.die()
 
+    def update_display(self):
+        self.timer.tick(self.FPS)
+        self.screen.fill('black')
+        self.draw_board()
+
+        self.player_logic()
+        self.enemy_logic()
+       
         self.bar.draw(self.screen)
         if self.bar.is_time_over():
             self.display_game_over_screen(self.player.check_player_win(self.board))
