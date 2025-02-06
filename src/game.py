@@ -81,11 +81,11 @@ class Game:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    self.running = False
                     return
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
+                        self.running = False
                         return
 
     def get_enemy_from_collision(self):
