@@ -8,7 +8,7 @@ class Player(Entity):
     """Player class"""
     def __init__(self, square_size, x, y):
         image = pygame.transform.scale(pygame.image.load(PLAYER_SVG_PATH), (square_size, square_size))
-        super().__init__(square_size, image, x, y)
+        super().__init__(square_size, image, x, y, Tile.PLAYER, Tile.ENEMY)
 
         self.direction_command = Entity.Direction.RIGHT
 

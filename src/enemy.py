@@ -1,39 +1,60 @@
 import pygame
+import random
 from src.entity import Entity
 from src.tile import Tile
-from src.enemy_movement import get_next_direction
-from src.misc import get_random_tile_coordinate
+from src.misc import get_surrounding_tiles, is_paintable_tile, is_empty_tile, get_random_tile_coordinate
 
 ENEMY_SVG_PATH = 'assets/enemy_car.svg'
 
 class Enemy(Entity):
     """Enemy class"""
-    def __init__(self, square_size, x, y):
+    def __init__(self, square_size: int, x: int, y: int):
         image = pygame.transform.scale(pygame.image.load(ENEMY_SVG_PATH), (square_size, square_size))
-        super().__init__(square_size, image, x, y)
+        super().__init__(square_size, image, x, y, Tile.ENEMY, Tile.PLAYER)
 
-        self.dead = False
-        self.respawn_delay_ms = 2000
-        self.respawn_time = 0
+        self.dead: bool = False
+        self.respawn_delay_ms: int = 2000
+        self.respawn_time: int = 0
         
-        self.previous_direction = self.direction
+        self.previous_direction: Entity.Direction = self.direction
 
-    def set_tile_attributes(self):
-        self.friendly_tile = Tile.ENEMY
-        self.enemy_tile = Tile.PLAYER
-
-    def move(self, board, center_x, center_y):
+    def move(self, board: list[list[int]], center_x: int, center_y: int) -> None:
         self.check_position(board, center_x, center_y)
         
-        self.direction = get_next_direction(self, board, center_x, center_y)
+        self.direction = self.get_next_direction(board, center_x, center_y)
         self.previous_direction = self.direction
 
         super().move()
 
-    def die(self):
+    def die(self) -> None:
         self.dead = True
         self.respawn_time = pygame.time.get_ticks() + self.respawn_delay_ms
 
-    def respawn(self, board):
+    def respawn(self, board: list[list[int]]) -> None:
         self.dead = False
         self.x, self.y = get_random_tile_coordinate(board, Tile.RESPAWN.board_index, self.square_size)
+
+    def get_next_direction(self, board: list[list[int]], center_x: int, center_y:int) -> Entity.Direction:
+        if self.turns_allowed[self.previous_direction]:
+            if random.random() > 0.01:
+                return self.previous_direction
+
+        priority_directions = []
+        empty_space_directions = []
+        surrounding_tiles = get_surrounding_tiles(board, self, center_x, center_y)
+        for direction, tile in surrounding_tiles:
+            if is_paintable_tile(tile, self):
+                priority_directions.append(direction)
+            if is_empty_tile(tile):
+                 empty_space_directions.append(direction)
+
+        if priority_directions:
+            return random.choice(priority_directions)
+        elif empty_space_directions:
+            return random.choice(empty_space_directions)
+        
+        allowed_directions = [d for d in self.Direction if self.turns_allowed[d]]
+        if allowed_directions:
+            return random.choice(allowed_directions)
+        
+        return self.Direction.RIGHT

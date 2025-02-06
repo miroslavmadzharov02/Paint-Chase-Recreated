@@ -1,8 +1,8 @@
 from enum import Enum
 class Tile(Enum):
-    def __init__(self, board_index, color):
-        self.board_index = board_index
-        self.color = color
+    def __init__(self, board_index: int, color: str) -> None:
+        self.board_index: int = board_index
+        self.color:str = color
 
     EMPTY = (0, 'darkslateblue')
     WALL = (1, 'forestgreen')
