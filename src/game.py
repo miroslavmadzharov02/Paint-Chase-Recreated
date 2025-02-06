@@ -12,7 +12,7 @@ class Game:
     """Game class"""
     FPS = 60
 
-    def __init__(self, level_index):
+    def __init__(self, level_index, multiplayer=False):
         pygame.init()
 
         self.level = Level(level_index)
@@ -26,7 +26,11 @@ class Game:
 
         self.board = self.level.board
 
-        self.player = Player(self.level.square_size, 0, 0)
+        self.multiplayer = multiplayer
+        player_starting_coords = (0, 0)
+        self.player = Player(self.level.square_size, *player_starting_coords)
+        player2_starting_coords = (self.level.square_size, 0)
+        self.player2 = Player(self.level.square_size, *player2_starting_coords) if multiplayer else None
 
         self.enemies = self.level.get_enemies()
 
@@ -36,13 +40,6 @@ class Game:
         self.lose_image = pygame.transform.scale(pygame.image.load(LOSE_SVG_PATH), (self.level.square_size * 10, self.level.square_size * 10))
 
         self.running = True
-
-    def draw_board(self):
-        for row in range(len(self.board)):
-            for col in range(len(self.board[row])):
-                for tile in Tile:
-                    if self.board[row][col] == tile.board_index:
-                        pygame.draw.rect(self.screen, tile.color, (col * self.level.square_size, row * self.level.square_size, self.level.square_size, self.level.square_size))
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -57,19 +54,21 @@ class Game:
                     self.player.set_command(Player.Direction.DOWN)
                 if event.key == pygame.K_UP:
                     self.player.set_command(Player.Direction.UP)
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_RIGHT and self.player.direction_command == self.player.Direction.RIGHT:
-                    self.player.set_command(Player.Direction.RIGHT)
-                if event.key == pygame.K_LEFT and self.player.direction_command == self.player.Direction.LEFT:
-                    self.player.set_command(Player.Direction.LEFT)
-                if event.key == pygame.K_DOWN and self.player.direction_command == self.player.Direction.DOWN:
-                    self.player.set_command(Player.Direction.DOWN)
-                if event.key == pygame.K_UP and self.player.direction_command == self.player.Direction.UP:
-                    self.player.set_command(Player.Direction.UP)   
 
-        for i in range(len(self.player.Direction)):
-            if self.player.direction_command == i and self.player.turns_allowed[i]:
-                self.player.face(i)
+                if self.multiplayer:
+                    if event.key == pygame.K_d:
+                        self.player2.set_command(Player.Direction.RIGHT)
+                    if event.key == pygame.K_a:
+                        self.player2.set_command(Player.Direction.LEFT)
+                    if event.key == pygame.K_s:
+                        self.player2.set_command(Player.Direction.DOWN)
+                    if event.key == pygame.K_w:
+                        self.player2.set_command(Player.Direction.UP)
+
+        for player in [self.player, self.player2] if self.multiplayer else [self.player]:
+            for i in range(len(player.Direction)):
+                if player.direction_command == i and player.turns_allowed[i]:
+                    player.face(i)
 
     def display_game_over_screen(self, player_won):
         image = self.win_image if player_won else self.lose_image
@@ -88,22 +87,22 @@ class Game:
                         self.running = False
                         return
 
-    def get_enemy_from_collision(self):
-        player_rect = self.player.get_rect()
+    def get_enemy_from_collision(self, player):
+        player_rect = player.get_rect()
         for enemy in self.enemies:
             if player_rect.colliderect(enemy.get_rect()):
                 return enemy
         return None
 
-    def player_logic(self):
-        self.player.draw(self.screen)
+    def player_logic(self, player):
+        player.draw(self.screen)
 
-        center_x, center_y = self.player.get_centered_coords()
-        self.player.check_position(self.board, center_x, center_y)
-        self.player.move()
-        self.player.interact_tile(self.board, center_x, center_y, self.window_width)
+        center_x, center_y = player.get_centered_coords()
+        player.check_position(self.board, center_x, center_y)
+        player.move()
+        player.interact_tile(self.board, center_x, center_y, self.window_width)
 
-        self.player.check_boost_time()
+        player.check_boost_time()
 
     def enemy_logic(self):
         for enemy in self.enemies:
@@ -116,16 +115,19 @@ class Game:
                 if pygame.time.get_ticks() >= enemy.respawn_time:
                     enemy.respawn(self.board)
 
-        collision_enemy = self.get_enemy_from_collision()
-        if collision_enemy:
-            collision_enemy.die()
+        for player in [self.player, self.player2] if self.multiplayer else [self.player]:
+            collision_enemy = self.get_enemy_from_collision(player)
+            if collision_enemy:
+                collision_enemy.die()
 
     def update_display(self):
         self.timer.tick(self.FPS)
         self.screen.fill('black')
-        self.draw_board()
+        self.level.draw(self.screen)
 
-        self.player_logic()
+        self.player_logic(self.player)
+        if self.multiplayer:
+            self.player_logic(self.player2)
         self.enemy_logic()
        
         self.bar.draw(self.screen)
