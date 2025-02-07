@@ -12,10 +12,6 @@ class Player(Entity):
 
         self.direction_command = Entity.Direction.RIGHT
 
-    def set_tile_attributes(self):
-        self.friendly_tile = Tile.PLAYER
-        self.enemy_tile = Tile.ENEMY
-
     def set_command(self, direction_command):
         self.direction_command = direction_command
     

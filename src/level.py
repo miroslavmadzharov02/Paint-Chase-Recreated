@@ -2,12 +2,12 @@ import pygame
 from src.board import boards, board_enemy_counts
 from src.tile import Tile
 from src.enemy import Enemy
-from src.board_utils import get_random_tile_coordinate
+from src.board_utils import get_random_tile_coordinate, get_tile_coordinates
 
 class Level:
     def __init__(self, level_index: int) -> None:
         self.boards_count: int = len(boards)
-        if self.boards_count < level_index:    
+        if self.boards_count < level_index:
             raise IndexError("Level index is out of range.")
         self.current_level_index: int = level_index
 
@@ -17,8 +17,14 @@ class Level:
 
         self.rows_count: int = len(self.board)
         self.cols_count: int = len(self.board[0])
+        for index, row in enumerate(self.board):
+            if len(row) != self.cols_count:
+                raise ValueError(f"Row {index} has length {len(row)}; expected {self.cols_count}.")
 
         self.square_size: int = 50
+
+        if not get_tile_coordinates(self.board, Tile.RESPAWN.board_index, self.square_size):
+            raise ValueError("Board contains no places for enemies to spawn/respawn")
 
         if len(board_enemy_counts) < self.current_level_index:
             raise IndexError("Couldn't get enemy count.")
