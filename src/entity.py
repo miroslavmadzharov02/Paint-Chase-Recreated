@@ -81,7 +81,6 @@ class Entity:
                  board[center_y // self.square_size][center_x // self.square_size] = self.friendly_tile.board_index
             if is_boost_tile(current_tile):
                 if self.boost_time == 0:
-                    print("HERE")
                     self.current_speed += self.boost_speed 
                     self.boost_time = pygame.time.get_ticks()    
 
