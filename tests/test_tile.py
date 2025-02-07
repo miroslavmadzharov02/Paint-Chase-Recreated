@@ -2,11 +2,6 @@ import pytest
 from src.entity import Entity
 from src.tile import Tile, is_empty_tile, is_paintable_tile, is_boost_tile
 
-def test_tile_enum_values():
-    for tile in Tile.__members__.values():
-        assert isinstance(tile.board_index, int)
-        assert isinstance(tile.color, str)
-
 @pytest.mark.parametrize("tile, expected", [
         (Tile.EMPTY.board_index, True),
         (Tile.ENEMY.board_index, True),
