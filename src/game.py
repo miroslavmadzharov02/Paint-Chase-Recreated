@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from src.player import Player
 from src.bar import Bar
 from src.level import Level
+from src.board import boards, board_enemy_counts
 
 if TYPE_CHECKING:
     from src.enemy import Enemy
@@ -19,7 +20,7 @@ class Game:
     def __init__(self, level_index: int, multiplayer:bool = False):
         pygame.init()
 
-        self.level: Level = Level(level_index)
+        self.level: Level = Level(level_index, boards, board_enemy_counts)
 
         self.bottom_padding: int = self.level.square_size
         self.window_width: int = self.level.cols_count * self.level.square_size
