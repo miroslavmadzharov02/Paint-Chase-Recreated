@@ -1,5 +1,6 @@
 import pytest
 import pygame
+import random
 from src.tile import Tile
 from src.entity import Entity
 from src.board_utils import get_surrounding_tiles, get_tile_coordinates, get_random_tile_coordinate
@@ -48,5 +49,6 @@ def test_get_tile_coordinates(tile_type, expected_coordinates) -> None:
     assert sorted(result) == sorted(expected_coordinates)
 
 def test_get_random_tile_coordinate() -> None:
+    random.seed(0)
     result = get_random_tile_coordinate(board, tile_type=5, square_size=1)
     assert result in tile_5_positions
