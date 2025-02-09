@@ -1,8 +1,9 @@
 import pygame
 
 class Bar:
+    """Class to track elapsed time"""
     def __init__(self, window_height: int, window_width: int, bottom_padding: int) -> None:
-        SECONDS = 15
+        seconds = 15
 
         self.bar_x = 0
         self.bar_y = window_height - bottom_padding
@@ -10,7 +11,7 @@ class Bar:
         self.bar_width = window_width
         self.bar_height = bottom_padding
 
-        self.total_time = SECONDS * 1000
+        self.total_time = seconds * 1000
         self.start_ticks = pygame.time.get_ticks()
         
         self.main_color = 'gray17'

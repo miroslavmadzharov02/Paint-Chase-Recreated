@@ -1,7 +1,8 @@
-"""pygame module"""
-import pygame
+"""used for logging errors and exceptions"""
 import logging
+#used to avoid circular imports when type checking
 from typing import TYPE_CHECKING
+import pygame
 from src.player import Player
 from src.bar import Bar
 from src.level import Level
@@ -39,7 +40,7 @@ class Game:
 
         self.enemies: list["Enemy"] = self.level.get_enemies()
 
-        self.bar: Bar = Bar(self.window_height, self.window_width, self.bottom_padding)
+        self.countdown_bar: Bar = Bar(self.window_height, self.window_width, self.bottom_padding)
 
         self.win_image: pygame.Surface = pygame.transform.scale(pygame.image.load(WIN_SVG_PATH), (self.level.square_size * 10, self.level.square_size * 10))
         self.lose_image: pygame.Surface = pygame.transform.scale(pygame.image.load(LOSE_SVG_PATH), (self.level.square_size * 10, self.level.square_size * 10))
@@ -136,9 +137,9 @@ class Game:
         if self.player2:
             self.player_logic(self.player2)
         self.enemy_logic()
-       
-        self.bar.draw(self.screen)
-        if self.bar.is_time_over():
+
+        self.countdown_bar.draw(self.screen)
+        if self.countdown_bar.is_time_over():
             self.display_game_over_screen(self.player.check_player_win(self.board))
 
         pygame.display.flip()

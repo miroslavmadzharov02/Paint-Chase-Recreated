@@ -1,10 +1,12 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
+#used to avoid circular imports when type checking
 if TYPE_CHECKING:
     from src.entity import Entity
 
 class Tile(Enum):
+    """Enum for supported tiles on the board"""
     def __init__(self, board_index: int, color: str) -> None:
         self.board_index: int = board_index
         self.color:str = color

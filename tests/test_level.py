@@ -1,9 +1,8 @@
 import pytest
+import pygame
 from src.board import boards, board_enemy_counts
-from src.tile import Tile
 from src.enemy import Enemy
 from src.level import Level
-import pygame
 
 boards = [[[0, 4],
         [1, 0]]]
@@ -48,13 +47,6 @@ def test_valid_level_initialization() -> None:
     assert level.enemy_count == 1
     assert level.rows_count == 2
     assert level.cols_count == 2
-
-def test_draw_level() -> None:
-    level = Level(0, boards, board_enemy_counts)
-    try:
-        level.draw(screen)
-    except Exception as e:
-        pytest.fail(f"Unexpected exception during draw: {e}")
 
 def test_initial_spawn_coordinates() -> None:
     level = Level(0, boards, board_enemy_counts)

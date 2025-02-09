@@ -1,6 +1,6 @@
 import pytest
 import pygame
-from src.tile import Tile, is_empty_tile, is_paintable_tile, is_boost_tile
+from src.tile import Tile
 from src.entity import Entity
 
 pygame.init()

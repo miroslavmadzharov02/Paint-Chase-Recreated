@@ -1,3 +1,4 @@
+#How many enemies will be at the corresponding board
 board_enemy_counts = [1, 1, 3]
 
 boards = [

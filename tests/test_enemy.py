@@ -1,5 +1,5 @@
-import pygame
 import random
+import pygame
 from src.tile import Tile
 from src.enemy import Enemy
 from src.board_utils import get_random_tile_coordinate

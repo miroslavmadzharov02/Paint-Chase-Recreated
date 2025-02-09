@@ -4,6 +4,7 @@ from src.enemy import Enemy
 from src.board_utils import get_random_tile_coordinate, get_tile_coordinates
 
 class Level:
+    """Class for handling details about current board"""
     def __init__(self, level_index: int, boards: list[list[list[int]]], board_enemy_counts: list[int]) -> None:
         self.boards_count: int = len(boards)
         if self.boards_count < level_index:
@@ -34,12 +35,15 @@ class Level:
             raise ValueError("Expected enemy count to be larger than 0.")
 
     def draw(self, screen: pygame.Surface) -> None:
-        for row in range(len(self.board)):
-            for col in range(len(self.board[row])):
-                tile_index = self.board[row][col]
+        for row_index, row in enumerate(self.board):
+            for col_index, tile_index in enumerate(row):
                 tile = next((t for t in Tile if t.board_index == tile_index), None)
                 if tile:
-                    pygame.draw.rect(screen, tile.color, (col * self.square_size, row * self.square_size, self.square_size, self.square_size))
+                    pygame.draw.rect(
+                        screen,
+                        tile.color,
+                        (col_index * self.square_size, row_index * self.square_size, self.square_size, self.square_size)
+                    )
 
     def get_initial_spawn_coordinates_enemies(self) -> list[tuple[int, int]]:
         result = [get_random_tile_coordinate(self.board, Tile.RESPAWN.board_index, self.square_size) 
@@ -47,7 +51,7 @@ class Level:
         if not result:
             raise ValueError("Could not get initial spawn coords for enemies.")
         return result
-    
+
     def get_enemies(self) -> list[Enemy]:
         coords = self.get_initial_spawn_coordinates_enemies()
         return [Enemy(self.square_size, x, y) for x,y in coords]

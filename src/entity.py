@@ -3,7 +3,9 @@ import pygame
 from src.tile import Tile, is_empty_tile, is_paintable_tile, is_boost_tile
 
 class Entity:
+    """Base class for moveable entity"""
     class Direction(int, Enum):
+        """Basic supported cardinal directions"""
         RIGHT = 0
         LEFT = 1
         UP = 2
@@ -16,7 +18,7 @@ class Entity:
         self.y: int = y
         self.direction: Entity.Direction = Entity.Direction.RIGHT
         self.turns_allowed: list[bool] = [False, False, False, False]
-        
+
         self.base_speed: int = 2
         self.current_speed: int = self.base_speed
         self.boost_speed: int = 1
@@ -78,7 +80,7 @@ class Entity:
         if 0 < center_x < window_width:
             current_tile = board[center_y // self.square_size][center_x // self.square_size]
             if is_paintable_tile(current_tile, self):
-                 board[center_y // self.square_size][center_x // self.square_size] = self.friendly_tile.board_index
+                board[center_y // self.square_size][center_x // self.square_size] = self.friendly_tile.board_index
             if is_boost_tile(current_tile):
                 if self.boost_time == 0:
                     self.current_speed += self.boost_speed 
@@ -90,8 +92,8 @@ class Entity:
     def check_boost_time(self) -> None:
         if self.boost_time != 0:
             if pygame.time.get_ticks() - self.boost_time > self.boost_duration:
-                self.reset_speed() 
-                self.boost_time = 0 
+                self.reset_speed()
+                self.boost_time = 0
 
     def face(self, direction) -> None:
         self.direction = direction

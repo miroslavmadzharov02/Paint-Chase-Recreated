@@ -40,7 +40,7 @@ def test_initialization() -> None:
 def test_set_command() -> None:
     new_command = Player.Direction.UP
     player.set_command(new_command)
-    
+
     assert player.direction_command == new_command
 
 @pytest.mark.parametrize("board, expected", [

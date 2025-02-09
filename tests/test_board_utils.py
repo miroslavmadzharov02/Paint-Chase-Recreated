@@ -1,6 +1,6 @@
+import random
 import pytest
 import pygame
-import random
 from src.tile import Tile
 from src.entity import Entity
 from src.board_utils import get_surrounding_tiles, get_tile_coordinates, get_random_tile_coordinate
